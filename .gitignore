@@ -1,0 +1,10 @@
+# Ignore Python venv
+venv/
+__pycache__/
+*.pyc
+
+# Ignore Node.js modules
+node_modules/
+
+# Mac system files
+.DS_Store

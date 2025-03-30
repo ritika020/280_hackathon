@@ -1,0 +1,8 @@
+fastapi
+uvicorn
+pydantic
+python-multipart
+# optional, if you want advanced agent logic
+langchain
+openai
+# ...

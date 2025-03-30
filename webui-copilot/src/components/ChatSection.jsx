@@ -18,17 +18,41 @@ function ChatSection() {
     setMessages((prev) => [...prev, userMessage]);
     setInputValue('');
 
+    // Inside handleSendMessage after user message
+    try {
+        const response = await fetch("http://127.0.0.1:8000/query", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+            prompt: userMessage.text, 
+            // agent: "webAgent"  // or "clinicalAgent", "foodSecurityAgent", or auto-detection
+        }),
+        });
+        if (!response.ok) {
+        throw new Error(`Server error: ${response.status}`);
+        }
+        const data = await response.json();
+        // data should be: { sender: "ai", text: "some text" }
+    
+        // 3) Add AI message
+        setMessages((prev) => [...prev, { sender: data.sender, text: data.text }]);
+    } catch (error) {
+        console.error("Error calling agent orchestrator:", error);
+        // Optionally add an error message to chat
+        setMessages((prev) => [...prev, { sender: "ai", text: "Error: " + error.message }]);
+    }  
+
     // 2) (Optional) Make a backend call to get AI response
     //    For the hackathon, you'd do something like:
     //    const response = await fetch("http://localhost:8000/query", { ... });
     //    const data = await response.json();
 
     // 3) Mock an AI response
-    const mockAIResponse = {
-      sender: 'ai',
-      text: `You said: "${userMessage.text}". This is a mock AI response.`,
-    };
-    setMessages((prev) => [...prev, mockAIResponse]);
+    // const mockAIResponse = {
+    //   sender: 'ai',
+    //   text: `You said: "${userMessage.text}". This is a mock AI response.`,
+    // };
+    // setMessages((prev) => [...prev, mockAIResponse]);
   };
 
   // Press "Enter" to send
