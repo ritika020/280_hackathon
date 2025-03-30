@@ -1,8 +1,38 @@
+# fastapi
+# uvicorn
+# pydantic
+# python-multipart
+# # optional, if you want advanced agent logic
+# langchain
+# openai
+# # ...
+
+# Core FastAPI setup
 fastapi
-uvicorn
+uvicorn[standard]
 pydantic
-python-multipart
-# optional, if you want advanced agent logic
+
+# HTTP requests (for calling external APIs)
+httpx
+
+# LLM, RAG, and embeddings
 langchain
 openai
-# ...
+faiss-cpu
+tiktoken
+chromadb  # optional: local vector store
+
+# PDF parsing (for Clinical/Food Security agents)
+PyMuPDF  # or use unstructured
+pdfminer.six
+
+# Environment management
+python-dotenv
+
+# (Optional) If you plan to use HuggingFace models locally
+transformers
+sentence-transformers
+
+unstructured
+pymupdf
+faiss-cpu
