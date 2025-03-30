@@ -36,3 +36,6 @@ sentence-transformers
 unstructured
 pymupdf
 faiss-cpu
+langchain_ollama
+langchain_community
+langchain_huggingface
