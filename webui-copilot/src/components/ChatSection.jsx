@@ -24,7 +24,7 @@ function ChatSection() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
-            prompt: userMessage.text, 
+          user_input: userMessage.text, 
             // agent: "webAgent"  // or "clinicalAgent", "foodSecurityAgent", or auto-detection
         }),
         });
@@ -32,10 +32,13 @@ function ChatSection() {
         throw new Error(`Server error: ${response.status}`);
         }
         const data = await response.json();
-        // data should be: { sender: "ai", text: "some text" }
     
         // 3) Add AI message
-        setMessages((prev) => [...prev, { sender: data.sender, text: data.text }]);
+        const aiMessage = typeof data.response === "string"
+        ? data.response  // Case 2: response is a plain string
+        : data.response?.content || "No response from AI.";  // Case 1: response.content
+
+        setMessages((prev) => [...prev, { sender: "ai", text: aiMessage }]);
     } catch (error) {
         console.error("Error calling agent orchestrator:", error);
         // Optionally add an error message to chat

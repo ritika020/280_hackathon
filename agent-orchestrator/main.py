@@ -66,11 +66,19 @@
 #     return QueryResponse(sender="ai", text=response_text)
 
 from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from orchestrator import handle_query
 
 app = FastAPI()
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],  # Frontend origin
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 class QueryRequest(BaseModel):
     user_input: str
 
