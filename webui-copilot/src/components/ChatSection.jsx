@@ -6,9 +6,19 @@ const COLORS = [
   "#8dd1e1", "#ffbb28", "#ff8042", "#d0ed57", "#a4de6c"
 ];
 
-function ChatSection({ messages, setMessages, inputValue, setInputValue, addWidget }) {
+function ChatSection({
+  messages,
+  setMessages,
+  inputValue,
+  setInputValue,
+  addWidget,
+  modalVisible,
+  setModalVisible,
+  modalData,
+  setModalData
+}) {
   const bottomRef = useRef(null);
-  const [modalData, setModalData] = useState(null);
+  const [lastPrompt, setLastPrompt] = useState('');
 
   useEffect(() => {
     if (bottomRef.current) {
@@ -17,27 +27,28 @@ function ChatSection({ messages, setMessages, inputValue, setInputValue, addWidg
   }, [messages]);
 
   const handleSendMessage = async () => {
-    if (!inputValue.trim()) return;
+    const prompt = inputValue.trim();
+    if (!prompt) return;
 
-    const userMessage = { sender: 'user', text: inputValue };
+    const userMessage = { sender: 'user', text: prompt };
     setMessages((prev) => [...prev, userMessage]);
     setInputValue('');
+    setLastPrompt(prompt);
 
     try {
       const response = await fetch("http://127.0.0.1:8000/query", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ user_input: userMessage.text }),
+        body: JSON.stringify({ user_input: prompt }),
       });
 
-      if (!response.ok) throw new Error(`Server error: ${response.status}`);
       const data = await response.json();
 
       // const aiMessage = typeof data.response === "string"
       //   ? data.response
       //   : data.response || "No response from AI.";
 
-      console.log(data.response)
+      // console.log(data.response)
 
       setMessages((prev) => [...prev, { sender: "ai", text: data.response }]);
     } catch (error) {
@@ -52,6 +63,22 @@ function ChatSection({ messages, setMessages, inputValue, setInputValue, addWidg
     }
   };
 
+  const handleAddWidget = () => {
+    const cleanTitle = lastPrompt
+      .replace(/[^a-zA-Z0-9 ]/g, '')
+      .trim()
+      .split(/\s+/)
+      .slice(0, 2)
+      .join(' ');
+
+    addWidget({
+      title: cleanTitle || "Widget",
+      data: modalData.data
+    });
+
+    setModalVisible(false);
+  };
+
   const renderMessageContent = (msg) => {
     try {
       const parsed = typeof msg.text === 'string' ? JSON.parse(msg.text) : msg.text;
@@ -61,7 +88,10 @@ function ChatSection({ messages, setMessages, inputValue, setInputValue, addWidg
         return (
           <button
             className="open-chart-modal"
-            onClick={() => setModalData(parsed)}
+            onClick={() => {
+              setModalData(parsed);
+              setModalVisible(true);
+            }}
             style={{ marginBottom: '8px' }}
           >
             📊 View Chart
@@ -93,16 +123,13 @@ function ChatSection({ messages, setMessages, inputValue, setInputValue, addWidg
       </div>
 
       {/* Modal for Chart */}
-      {modalData && (
-        <div className="modal-overlay" onClick={() => setModalData(null)}>
+      {modalVisible && modalData && (
+        <div className="modal-overlay" onClick={() => setModalVisible(false)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <h4 style={{ display: 'flex', justifyContent: 'space-between' }}>
               Pie Chart
               <span
-                onClick={() => {
-                  addWidget(modalData);
-                  setModalData(null);
-                }}
+                onClick={handleAddWidget}
                 style={{ cursor: 'pointer', fontSize: '1.5rem', color: '#007bff' }}
               >
                 ➕

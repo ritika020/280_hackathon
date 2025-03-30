@@ -11,17 +11,25 @@ function App() {
   const [inputValue, setInputValue] = useState('');
   const [widgets, setWidgets] = useState([]);
 
-  // Callback to add widget from ChatSection
+  // Controls for modal data across components
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalData, setModalData] = useState(null);
+
   const addWidget = (widgetData) => {
     setWidgets((prev) => [...prev, widgetData]);
   };
 
   const removeWidget = (index) => {
     setWidgets((prev) => prev.filter((_, i) => i !== index));
-  };  
+  };
 
   const handleSelectPrompt = (promptText) => {
     setInputValue(promptText);
+  };
+
+  const openChart = (widget) => {
+    setModalData(widget);
+    setModalVisible(true);
   };
 
   return (
@@ -33,6 +41,7 @@ function App() {
           onSelectPrompt={handleSelectPrompt}
           widgets={widgets}
           removeWidget={removeWidget}
+          openChart={openChart}
         />
         <ChatSection
           messages={messages}
@@ -40,6 +49,10 @@ function App() {
           inputValue={inputValue}
           setInputValue={setInputValue}
           addWidget={addWidget}
+          modalVisible={modalVisible}
+          setModalVisible={setModalVisible}
+          modalData={modalData}
+          setModalData={setModalData}
         />
       </div>
     </div>

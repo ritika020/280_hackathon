@@ -6,12 +6,46 @@ const COLORS = [
   "#8dd1e1", "#ffbb28", "#ff8042", "#d0ed57", "#a4de6c"
 ];
 
-function Sidebar({ messageHistory, onSelectPrompt, widgets = [], removeWidget }) {
+function Sidebar({ messageHistory, onSelectPrompt, widgets = [], removeWidget, openChart }) {
   const userPrompts = messageHistory.filter((msg) => msg.sender === 'user');
 
   return (
     <div className="sidebar-container">
       <h3>API Widget</h3>
+
+      <div className="widget-blocks" style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '1rem' }}>
+        {widgets.map((widget, idx) => (
+          <div key={idx} style={{ position: 'relative' }}>
+            <div
+              onClick={() => openChart(widget)}
+              style={{
+                padding: '10px 12px',
+                backgroundColor: '#ccc',
+                borderRadius: '4px',
+                fontSize: '0.9rem',
+                cursor: 'pointer',
+                minWidth: '50px',
+                textAlign: 'center'
+              }}
+            >
+              {widget.title || `Chart ${idx + 1}`}
+            </div>
+            <span
+              onClick={() => removeWidget(idx)}
+              style={{
+                position: 'absolute',
+                top: -6,
+                right: -6,
+                cursor: 'pointer',
+                color: 'red',
+                fontSize: '1rem',
+              }}
+            >
+              ❌
+            </span>
+          </div>
+        ))}
+      </div>
 
       {/* Static Buttons */}
       <div style={{ display: 'flex', gap: '8px', marginTop: '10px', marginBottom: '16px' }}>
