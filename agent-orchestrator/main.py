@@ -70,6 +70,12 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from orchestrator import handle_query
 from agents.document_agent import handle_document_query
+from uuid import uuid4
+from db import db
+from schemas.session import SessionResponse
+from fastapi.responses import JSONResponse
+from datetime import datetime
+from fastapi.encoders import jsonable_encoder
 
 app = FastAPI()
 
@@ -82,16 +88,56 @@ app.add_middleware(
 )
 class QueryRequest(BaseModel):
     user_input: str
+    session_id: str
 
+## Basic scope - 3 agents - web, clinical, food   
 @app.post("/query")
 async def query_handler(request: QueryRequest):
-    response = await handle_query(request.user_input)
-    return {"response": response}
+    response = await handle_query(request.user_input,request.session_id)
+    ##return {"response": response.content if hasattr(response, "content") else str(response)}
+    return {"response":response}
 
+
+## Additional - User can upload their own documents
 @app.post("/document-query")
 async def document_query_handler(
     file: UploadFile = File(...),
-    query: str = Form(...)
+    query: str = Form(...),
+    session_id: str = Form(...)
 ):
-    response = await handle_document_query(file, query)
-    return {"response": response}
+    response = await handle_document_query(file, query,session_id)
+    return {"response": response.content if hasattr(response, "content") else str(response)}
+
+## Create a unique session id at the first load of the page
+@app.post("/create-session", response_model=SessionResponse)
+async def create_session():
+    session_id = str(uuid4())
+    session_count = await db.sessions.count_documents({})
+    session_name = f"Session {session_count + 1}"
+
+    session_doc = {
+        "session_id": session_id,
+        "name": session_name,
+        "messages": [],
+        "created_at": datetime.utcnow()
+    }
+
+    await db.sessions.insert_one(session_doc)
+
+    return {
+        "session_id": session_id,
+        "name": session_name,
+        "created_at": session_doc["created_at"]
+    }
+
+## Get all the previous chats 
+@app.get("/sessions")
+async def get_all_sessions():
+    sessions = []
+    cursor = db.sessions.find({}, {"_id": 0}).sort("created_at", -1)
+    async for session in cursor:
+        sessions.append(session)
+    json_safe = jsonable_encoder(sessions)
+    return JSONResponse(content={"sessions": json_safe})
+
+
