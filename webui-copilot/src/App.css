@@ -9,7 +9,7 @@
 
 /* The top bar at the very top */
 .top-bar {
-  background-color: #4267B2; /* A sample blue color */
+  background-color: #4267B2;
   color: #fff;
   height: 60px;
   display: flex;
@@ -22,7 +22,7 @@
 /* Main content area: left sidebar + right chat section */
 .main-content {
   display: flex;
-  flex: 1; /* fill the remaining space */
+  flex: 1;
 }
 
 /* Sidebar area */
@@ -31,6 +31,7 @@
   background-color: #fff;
   border-right: 1px solid #ddd;
   padding: 16px;
+  overflow-y: auto;
 }
 
 /* Chat container area */
@@ -90,7 +91,7 @@
   background-color: #fff;
 }
 
-/* Some controls at the left side of input (presentation, thumbs, etc.) */
+/* Controls at the left of input (presentation, thumbs) */
 .chat-controls {
   display: flex;
   align-items: center;
@@ -100,7 +101,7 @@
   cursor: pointer;
 }
 
-/* The bubble that holds the text input */
+/* Bubble that holds text input */
 .input-bubble {
   flex: 1;
   background-color: #f1f1f1;
@@ -119,7 +120,7 @@
   font-size: 0.95rem;
 }
 
-/* Icons inside the input bubble (like "Search", "Reason") */
+/* Icons inside the input bubble */
 .input-icons {
   display: flex;
   gap: 8px;
@@ -143,15 +144,68 @@
   font-size: 0.95rem;
 }
 
-/* For user messages (right side) */
 .message-bubble.user {
   background-color: #d2ebff;
   align-self: flex-end;
 }
 
-/* For AI messages (left side) */
 .message-bubble.ai {
   background-color: #fff;
   border: 1px solid #ddd;
   align-self: flex-start;
+}
+
+/* ---------- 🆕 NEW STYLES BELOW ---------- */
+
+/* Modal overlay */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Modal content */
+.modal-content {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 600px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Chart trigger button */
+.open-chart-modal {
+  padding: 6px 12px;
+  background-color: #f0f0f0;
+  border: 1px solid #bbb;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  margin-top: 4px;
+}
+
+.open-chart-modal:hover {
+  background-color: #e8e8e8;
+}
+
+/* Widget preview in sidebar */
+.sidebar-container .recharts-responsive-container {
+  margin-bottom: 12px;
+  background: #f9f9f9;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #eee;
+}
+
+.sidebar-container li {
+  position: relative;
+  padding-top: 8px;
 }

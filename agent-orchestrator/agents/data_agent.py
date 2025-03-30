@@ -21,6 +21,14 @@ llm = ChatOllama(model="llama2")
 
 async def handle_data_query(query: str) -> dict:
     try:
+        # Force model to output only JSON using a stricter prompt
+        # system_prompt = (
+        #     "You are a data-only agent. For the following query, respond ONLY with a raw JSON object.\n"
+        #     "Do NOT include any explanation, markdown, code block formatting, or comments.\n"
+        #     "Output must be strictly a valid JSON object. No quotes around the entire object. No extra text.\n"
+        #     "If a value includes a percent, return it as a number only (e.g., use 4.5 instead of 4.5%)."
+        # )
+
         system_prompt = (
             "You are a data-only agent. For the following query, respond ONLY with a raw JSON object.\n"
             "Do NOT include any explanation, markdown, code block formatting, or comments.\n"

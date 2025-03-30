@@ -9,6 +9,16 @@ function App() {
     { sender: 'ai', text: 'Hi! I am your Web UI Copilot. How can I help you today?' }
   ]);
   const [inputValue, setInputValue] = useState('');
+  const [widgets, setWidgets] = useState([]);
+
+  // Callback to add widget from ChatSection
+  const addWidget = (widgetData) => {
+    setWidgets((prev) => [...prev, widgetData]);
+  };
+
+  const removeWidget = (index) => {
+    setWidgets((prev) => prev.filter((_, i) => i !== index));
+  };  
 
   const handleSelectPrompt = (promptText) => {
     setInputValue(promptText);
@@ -21,12 +31,15 @@ function App() {
         <Sidebar
           messageHistory={messages}
           onSelectPrompt={handleSelectPrompt}
+          widgets={widgets}
+          removeWidget={removeWidget}
         />
         <ChatSection
           messages={messages}
           setMessages={setMessages}
           inputValue={inputValue}
           setInputValue={setInputValue}
+          addWidget={addWidget}
         />
       </div>
     </div>

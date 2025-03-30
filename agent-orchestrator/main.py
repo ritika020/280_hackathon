@@ -65,10 +65,11 @@
 
 #     return QueryResponse(sender="ai", text=response_text)
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from orchestrator import handle_query
+from agents.document_agent import handle_document_query
 
 app = FastAPI()
 
@@ -85,4 +86,12 @@ class QueryRequest(BaseModel):
 @app.post("/query")
 async def query_handler(request: QueryRequest):
     response = await handle_query(request.user_input)
+    return {"response": response}
+
+@app.post("/document-query")
+async def document_query_handler(
+    file: UploadFile = File(...),
+    query: str = Form(...)
+):
+    response = await handle_document_query(file, query)
     return {"response": response}
