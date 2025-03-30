@@ -1,0 +1,157 @@
+/* src/App.css */
+
+/* Overall container (vertical stacking: top bar + main content) */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh; /* fill the viewport */
+}
+
+/* The top bar at the very top */
+.top-bar {
+  background-color: #4267B2; /* A sample blue color */
+  color: #fff;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+/* Main content area: left sidebar + right chat section */
+.main-content {
+  display: flex;
+  flex: 1; /* fill the remaining space */
+}
+
+/* Sidebar area */
+.sidebar-container {
+  width: 300px;
+  background-color: #fff;
+  border-right: 1px solid #ddd;
+  padding: 16px;
+}
+
+/* Chat container area */
+.chat-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: #fafafa;
+}
+
+/* Chat header with "Web UI Copilot" label + user avatar */
+.chat-header {
+  background-color: #fff;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  border-bottom: 1px solid #ddd;
+  justify-content: space-between;
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+/* Right side of chat header (avatar, etc.) */
+.header-right {
+  display: flex;
+  align-items: center;
+}
+
+/* Circle avatar with "CV" letters */
+.user-avatar {
+  width: 32px;
+  height: 32px;
+  background-color: #ffcc00;
+  border-radius: 50%;
+  color: #000;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 8px;
+}
+
+/* The main message area / scrollable chat body */
+.chat-body {
+  flex: 1;
+  padding: 16px;
+  overflow-y: auto;
+}
+
+/* Chat input area at bottom */
+.chat-input-area {
+  border-top: 1px solid #ddd;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  background-color: #fff;
+}
+
+/* Some controls at the left side of input (presentation, thumbs, etc.) */
+.chat-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-right: 16px;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+/* The bubble that holds the text input */
+.input-bubble {
+  flex: 1;
+  background-color: #f1f1f1;
+  border-radius: 50px;
+  display: flex;
+  align-items: center;
+  padding: 8px 16px;
+  margin-right: 8px;
+}
+
+.input-bubble input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 0.95rem;
+}
+
+/* Icons inside the input bubble (like "Search", "Reason") */
+.input-icons {
+  display: flex;
+  gap: 8px;
+  margin-left: 8px;
+}
+
+/* Generic icon button styling */
+.icon-button {
+  cursor: pointer;
+  font-size: 1rem;
+  color: #666;
+}
+
+/* A message bubble in chat */
+.message-bubble {
+  max-width: 70%;
+  margin-bottom: 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  line-height: 1.3;
+  font-size: 0.95rem;
+}
+
+/* For user messages (right side) */
+.message-bubble.user {
+  background-color: #d2ebff;
+  align-self: flex-end;
+}
+
+/* For AI messages (left side) */
+.message-bubble.ai {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  align-self: flex-start;
+}
