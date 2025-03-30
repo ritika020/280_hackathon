@@ -1,67 +1,45 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 
-function ChatSection() {
+function ChatSection({ messages, setMessages, inputValue, setInputValue }) {
 
-  const [messages, setMessages] = useState([
-    // Example of an AI message to start
-    { sender: 'ai', text: 'Hi! I am your Web UI Copilot. How can I help you today?' },
-  ]);
+  const bottomRef = useRef(null);
 
-  const [inputValue, setInputValue] = useState('');
+  useEffect(() => {
+    if (bottomRef.current) {
+      bottomRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages]);
 
   // Handle "Send" or "Enter" key
   const handleSendMessage = async () => {
     if (!inputValue.trim()) return;
 
-    // 1) Add the user message
     const userMessage = { sender: 'user', text: inputValue };
     setMessages((prev) => [...prev, userMessage]);
     setInputValue('');
 
-    // Inside handleSendMessage after user message
     try {
-        const response = await fetch("http://127.0.0.1:8000/query", {
+      const response = await fetch("http://127.0.0.1:8000/query", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
-          user_input: userMessage.text, 
-            // agent: "webAgent"  // or "clinicalAgent", "foodSecurityAgent", or auto-detection
-        }),
-        });
-        if (!response.ok) {
-        throw new Error(`Server error: ${response.status}`);
-        }
-        const data = await response.json();
-    
-        // 3) Add AI message
-        const aiMessage = typeof data.response === "string"
-        ? data.response  // Case 2: response is a plain string
-        : data.response?.content || "No response from AI.";  // Case 1: response.content
+        body: JSON.stringify({ user_input: userMessage.text }),
+      });
+      if (!response.ok) throw new Error(`Server error: ${response.status}`);
+      const data = await response.json();
 
-        setMessages((prev) => [...prev, { sender: "ai", text: aiMessage }]);
+      const aiMessage = typeof data.response === "string"
+        ? data.response
+        : data.response?.content || "No response from AI.";
+
+      setMessages((prev) => [...prev, { sender: "ai", text: aiMessage }]);
     } catch (error) {
-        console.error("Error calling agent orchestrator:", error);
-        // Optionally add an error message to chat
-        setMessages((prev) => [...prev, { sender: "ai", text: "Error: " + error.message }]);
-    }  
-
-    // 2) (Optional) Make a backend call to get AI response
-    //    For the hackathon, you'd do something like:
-    //    const response = await fetch("http://localhost:8000/query", { ... });
-    //    const data = await response.json();
-
-    // 3) Mock an AI response
-    // const mockAIResponse = {
-    //   sender: 'ai',
-    //   text: `You said: "${userMessage.text}". This is a mock AI response.`,
-    // };
-    // setMessages((prev) => [...prev, mockAIResponse]);
+      setMessages((prev) => [...prev, { sender: "ai", text: "Error: " + error.message }]);
+    }
   };
 
-  // Press "Enter" to send
   const handleKeyDown = (e) => {
     if (e.key === 'Enter') {
-      e.preventDefault(); // Avoid newline
+      e.preventDefault();
       handleSendMessage();
     }
   };
@@ -105,13 +83,15 @@ function ChatSection() {
       {/* Chat Body */}
       <div className="chat-body">
         {messages.map((msg, idx) => (
-          <div
-            key={idx}
-            className={`message-bubble ${msg.sender === 'user' ? 'user' : 'ai'}`}
-          >
-            {msg.text}
+          <div key={idx} className={`message-bubble ${msg.sender === 'user' ? 'user' : 'ai'}`}>
+            {
+              typeof msg.text === 'string' && msg.text.trim().startsWith('{')
+                ? <pre>{JSON.stringify(JSON.parse(msg.text), null, 2)}</pre>
+                : msg.text
+            }
           </div>
         ))}
+        <div ref={bottomRef} />
       </div>
 
       {/* Input Area */}
@@ -123,7 +103,6 @@ function ChatSection() {
           <span className="icon-button" onClick={handleThumbsDown}>👎</span>
         </div>
 
-        {/* Input bubble with placeholders for icons */}
         <div className="input-bubble">
           <input
             type="text"
