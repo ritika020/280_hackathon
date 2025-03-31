@@ -12,7 +12,7 @@ def classify_query(query: str) -> str:
     elif any(word in q for word in ["heart", "clinical", "covid"]):
         print("[Orchestrator] Routing to CLINICAL agent")
         return "clinical"
-    elif any(word in q for word in ["hunger", "gdp", "malnutrition", "co2", "agriculture"]):
+    elif any(word in q for word in ["hunger", "gdp", "malnutrition", "co2", "agriculture", "food"]):
         print("[Orchestrator] Routing to FOOD SECURITY agent")
         return "food_security"
     else:
@@ -28,4 +28,5 @@ async def handle_query(query: str) -> str:
     elif agent_type == "food_security":
         return await handle_food_query(query)
     else:
-        return await handle_web_query(query)
+        answer = await handle_web_query(query)
+        return answer.content
